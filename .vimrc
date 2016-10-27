@@ -14,7 +14,9 @@ set clipboard=unnamedplus
 call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
-
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-commentary'
 " ----- Making Vim look good ------------------------------------------
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'tomasr/molokai'
@@ -45,6 +47,12 @@ Plugin 'jez/vim-c0'
 Plugin 'jez/vim-ispc'
 Plugin 'kchmck/vim-coffee-script'
 
+" ----- Relativenumber plugins ------------------------------------------------
+Plugin 'jeffkreeftmeije/rim-numbertoggle'
+
+" ----- Colorswither plugins ------------------------------------------------
+Plugin 'xolox/vim-colorscheme-switcher'
+
 " ---- Extras/Advanced plugins ----------------------------------------
 " Highlight and strip trailing whitespace
 "Plugin 'ntpeters/vim-better-whitespace'
@@ -53,16 +61,14 @@ Plugin 'kchmck/vim-coffee-script'
 " Align CSV files at commas, align Markdown tables, and more
 "Plugin 'godlygeek/tabular'
 " Automaticall insert the closing HTML tag
-"Plugin 'HTML-AutoCloseTag'
-" Make tmux look like vim-airline (read README for extra instructions)
-"Plugin 'edkolev/tmuxline.vim'
-" All the other syntax plugins I use
-"Plugin 'ekalinin/Dockerfile.vim'
-"Plugin 'digitaltoad/vim-jade'
-"Plugin 'tpope/vim-liquid'
+"Plugin 'HTML-AutoCloseTag' " Make tmux look like vim-airline (read README for extra instructions) "Plugin 'edkolev/tmuxline.vim' " All the other syntax plugins I use "Plugin 'ekalinin/Dockerfile.vim' "Plugin 'digitaltoad/vim-jade' "Plugin 'tpope/vim-liquid'
 "Plugin 'cakebaker/scss-syntax.vim'
 
 call vundle#end()
+call plug#begin()
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+call plug#end()
 execute pathogen#infect()
 
 filetype plugin indent on
@@ -171,3 +177,40 @@ augroup mySyntastic
 
    " press <Leader>S (i.e., \S) to not automatically check for errors
    nnoremap <Leader>S :SyntasticToggleMode<CR>
+
+
+" --- MY OWN CHANGES --- "
+
+" Take away the arrowkeys to learn habit"
+:imap <Up> <NOP>
+:imap <Down> <NOP>
+:imap <Left> <NOP>
+:imap <Right> <NOP>
+
+" Make relative number work good "
+:au FocusLost * :set number
+:au FocusGained * :set relativenumber
+autocmd InsertEnter * :set number
+autocmd InsertLeave * :set relativenumber
+function! NumberToggle()
+	if(&relativenumber == 1)
+		set number
+	else
+		set relativenumber
+	endif
+endfunc
+
+nnoremap <C-n> :call NumberToggle()<cr>
+
+
+"FIX C++ SYNTASTIC"
+let g:syntastic_cpp_compiler_options = ' -std=c++11'
+autocmd FileType sml setlocal commentstring=(*%s*)
+
+nnoremap n nzz
+nnoremap <C-u> <C-u>zz
+nnoremap <C-d> <C-d>zz
+nnoremap <Tab> :bnext<CR>
+nnoremap <S-Tab> :bprevious<CR>
+nnoremap <F4> :bdelete<CR>
+set rtp+=~/.fzf
